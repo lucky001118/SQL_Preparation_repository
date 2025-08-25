@@ -97,22 +97,115 @@ from employees
 	order by (salary+ifnull(bonus,0)) desc limit 3;
     
 -- 18.	Find employees grouped by department where avg bonus > 5000.
+select department, avg(bonus) as Avarage_bonus, count(department) as Total_employee
+from employees 
+	group by department 
+    having avg(bonus) > 5000;
+    
 -- 19.	Find top 5 oldest employees with bonus not null.
--- 20.	Find employees whose name starts with ‘A’ and ends with ‘a’.
+select concat(first_name,' ',last_name) as full_name, department, salary, email, age
+from employees
+	where bonus is not null 
+    order by age desc limit 5;
+    
+-- 20.	Find employees whose name starts with ‘A’ and ends with ‘s’.
+select concat(first_name,' ',last_name) as full_name, department, salary, email, age
+from employees
+	where first_name like 'A%' and last_name like '%s';
+    -- if wants to first name start with 'A' and first name also ends with 'a' then
+select first_name, department, salary, email, age
+from employees
+	where first_name like 'A%a';
+    
 -- 21.	Find employees with hire_date = earliest in company.
+select concat(first_name,' ',last_name) as full_name, department, salary, email, age , hire_date
+from employees
+order by hire_date asc limit 6;
+
 -- 22.	Find employees whose salary = max salary in Marketing.
+select concat(first_name,' ',last_name) as full_name, department, salary, email, age , hire_date
+from employees
+where department = 'Marketing' and salary = (select max(salary) from employees where department = 'Marketing');
+
 -- 23.	Find all departments and number of employees in them.
+select department, count(department) As Number_of_Employees 
+from employees
+group by department;
+
 -- 24.	Find employees with duplicate first names.
+select first_name , count(first_name) as duplicate_name_count 
+from employees
+group by first_name having count(first_name) > 1;
+
 -- 25.	Find employees with salary > company’s overall avg salary.
+select concat(first_name, ' ', last_name) as Full_Name, salary, department
+from employees 
+where salary >= (select avg(salary) as salary from employees) ;
+
+select avg(salary) from employees;
+
 -- 26.	Find top 3 employees by performance rating and salary.
+select concat(first_name,' ',last_name) as full_name, department, salary, performance_rating, email, age , hire_date
+from employees
+order by performance_rating desc , salary desc limit 3;
+
 -- 27.	Find employees with salary > 1 lakh OR bonus > 10000.
+select concat(first_name,' ',last_name) as full_name, department, salary, bonus, performance_rating, email, age , hire_date
+from employees 
+where salary >= 100000 or bonus >= 10000
+order by salary desc, bonus desc;
+
 -- 28.	Find employees in IT where bonus is null.
+select concat(first_name,' ',last_name) as full_name, department, salary, bonus, performance_rating, email, age , hire_date
+from employees 
+where department = 'IT' and bonus is null;
+
 -- 29.	Find employees grouped by age range (20s,30s,40s).
+select concat(first_name,' ',last_name) as full_name, department, salary, bonus, performance_rating, email, age ,
+CASE
+	WHEN age>=20 and age<30 THEN '20s'
+    WHEN age >=30 and age<40 THEN '30s' 
+    WHEN age >=40 and age<50 THEN '40s'
+    WHEN age>=50 THEN 'Super Seniour'
+END as Age_Group
+from employees 
+order by age asc;
+
 -- 30.	Find employees active in HR with salary > 60000.
+select concat(first_name,' ',last_name) as full_name, department, salary, bonus, performance_rating, email, age,
+CASE
+	WHEN is_active=TRUE THEN 'Active'
+    ELSE 'Not Active'
+END as Availability
+from employees
+where department = 'HR' and salary>60000 and is_active=TRUE; 
+
 -- 31.	Find employees inactive but still have rating >= 4.
+select concat(first_name,' ',last_name) as full_name, department, salary, bonus, performance_rating, email, age, is_active,
+CASE
+	WHEN is_active=TRUE THEN 'Active'
+    ELSE 'Not Active'
+END as Availability
+from employees
+where is_active=FALSE and performance_rating>=4;
+
 -- 32.	Find 5 most recently hired employees in Finance.
+select concat(first_name,' ',last_name) as full_name, department, hire_date, salary, bonus, performance_rating, email, age, is_active
+from employees 
+where department='Finance'
+order by hire_date desc limit 5;
+
 -- 33.	Find departments sorted by avg salary DESC.
+select department, avg(salary) as Avarage_Salary
+from employees
+group by department
+order by avg(salary) desc;
+
 -- 34.	Find employees with total salary > ALL employees in Sales.
+select concat(first_name,' ',last_name) as full_name, department, hire_date, salary, bonus, performance_rating, email, age, is_active
+from employees as e
+where salary + ifnull(bonus,0) > (select sum(salary) from employees where department='Sales');
+
 -- 35.	Find employees older than 50 and salary < avg salary.
 -- 36.	Find employees where email contains dept name.
 -- 37.	Find employees with bonus null but rating = 5.
