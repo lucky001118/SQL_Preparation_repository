@@ -206,12 +206,41 @@ select concat(first_name,' ',last_name) as full_name, department, hire_date, sal
 from employees as e
 where salary + ifnull(bonus,0) > (select sum(salary) from employees where department='Sales');
 
--- 35.	Find employees older than 50 and salary < avg salary.
+-- 35.	Find employees older than 40 and salary < avg salary.
+select concat(first_name,' ',last_name) as full_name, department, hire_date, salary, bonus, performance_rating, email, age, is_active
+from employees
+where age>40 and salary < (select avg(salary) from employees) ;
+
 -- 36.	Find employees where email contains dept name.
+select concat(first_name,' ',last_name) as full_name, department, email, age, is_active
+from employees
+where email like '%dept%';
+
 -- 37.	Find employees with bonus null but rating = 5.
+select concat(first_name,' ',last_name) as full_name, department, hire_date, salary, bonus, performance_rating, email, age, is_active
+from employees 
+where bonus is null and performance_rating = 5;
+
 -- 38.	Find employees with emp_id in top 10 but ordered by salary.
+select emp_id, concat(first_name,' ',last_name) as full_name, department, hire_date, salary, bonus, performance_rating, email, age, is_active
+from employees
+order by salary asc limit 10;
+
 -- 39.	Find count of employees per department hired after 2021.
+select department, count(department) as number_of_employees 
+from employees 
+where hire_date>'2021-01-01'
+group by department;
+
 -- 40.	Find employees whose salary is between 2nd highest and 5th highest salary.
+select emp_id, concat(first_name,' ',last_name) as full_name, department, hire_date, salary, bonus, performance_rating, email, age, is_active
+from employees
+where salary between (select salary from employees order by salary desc limit 1 offset 2) and (select salary from employees order by salary desc limit 1 offset 5) ;
+--  OR
+select emp_id, concat(first_name,' ',last_name) as full_name, department, hire_date, salary, bonus, performance_rating, email, age, is_active
+from employees
+order by salary desc limit 4 offset 2;
+
 -- 41.	Find employees grouped by is_active and avg salary.
 -- 42.	Find employees with no bonus but highest rating.
 -- 43.	Find employees with phone number containing ‘1234’.
