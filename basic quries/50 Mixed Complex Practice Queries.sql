@@ -242,12 +242,55 @@ from employees
 order by salary desc limit 4 offset 2;
 
 -- 41.	Find employees grouped by is_active and avg salary.
+SELECT 
+    is_active,
+    COUNT(*) AS total_employees,
+    AVG(Salary) AS avg_salary
+FROM employees
+GROUP BY is_active;
+
 -- 42.	Find employees with no bonus but highest rating.
+select emp_id, concat(first_name,' ',last_name) as full_name, department, hire_date, salary, bonus, performance_rating, email, age, is_active
+from employees 
+where bonus is null and performance_rating in (5,4) ;
+
 -- 43.	Find employees with phone number containing ‘1234’.
+select emp_id, concat(first_name,' ',last_name) as full_name, phone_number, department, hire_date, salary, bonus, performance_rating, email, age, is_active
+from employees 
+where phone_number like '%1234%';
+
 -- 44.	Find employees whose salary is exactly avg salary of company.
+select emp_id, concat(first_name,' ',last_name) as full_name, department, hire_date, salary, bonus, performance_rating, email, age, is_active
+from employees 
+where salary = (select avg(salary) from employees) ;
+
 -- 45.	Find employees grouped by dept where max age < 40.
+select department, count(department) as count_of_employees 
+from employees where (select max(age) from employees)
+ group by department ;
+ 
 -- 46.	Find employees where salary + bonus = max(salary+bonus).
+select emp_id, concat(first_name,' ',last_name) as full_name, department, hire_date, salary, bonus, performance_rating, email, age, is_active, salary+bonus as total_salary
+from employees as e
+where salary+nullif(0,bonus) = (select max(salary+nullif(0,bonus)) from employees)
+group by emp_id;
+
 -- 47.	Find employees hired in same year as emp_id=10.
+select emp_id, concat(first_name,' ',last_name) as full_name, department, hire_date, salary, bonus, performance_rating, email, age, is_active, salary+bonus as total_salary
+from employees 
+where hire_date like concat((select extract(YEAR from hire_date) from employees where emp_id = 10),'%');
+
 -- 48.	Find employees whose first_name length > 6.
+select emp_id, concat(first_name,' ',last_name) as full_name, department, hire_date, salary, bonus, performance_rating, email, age, is_active, salary+bonus as total_salary
+from employees
+where length(first_name) > 6;
+
 -- 49.	Find employees with salary > 80000 ordered by hire_date.
+select emp_id, concat(first_name,' ',last_name) as full_name, department, hire_date, salary, bonus, performance_rating, email, age, is_active, salary+bonus as total_salary
+from employees
+where salary > 80000 order by hire_date;
+
 -- 50.	Find employees where bonus > avg bonus of company.
+select emp_id, concat(first_name,' ',last_name) as full_name, department, hire_date, salary, bonus, performance_rating, email, age, is_active, salary+bonus as total_salary
+from employees
+where bonus > (select avg(nullif(0,bonus)) from employees );
