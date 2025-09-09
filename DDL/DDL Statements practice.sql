@@ -101,19 +101,65 @@ DESC employees_details;
 
 -- #####      Section 5: ALTER TABLE – MODIFY COLUMN      #####
 -- 16.	Change the datatype of salary in employees to DECIMAL(12,2).
+ALTER TABLE employees_details 
+	MODIFY COLUMN salary DECIMAL(12,2);
+DESC employees_details;
 
--- 17.	Modify the column age in students to make it NOT NULL.
+-- 17.	Modify the column age in employees_details to make it NOT NULL.
+ALTER TABLE employees_details
+	ADD age INT;
+ALTER TABLE employees_details
+	MODIFY COLUMN age INT NOT NULL;
+DESC employees_details;
+    
 -- 18.	Change the length of dept_name in departments from 50 characters to 100 characters.
+DESC department;
+ALTER TABLE department
+	MODIFY COLUMN dep_name VARCHAR(100) ;
 
--- 🔹 Section 6: ALTER TABLE – CHANGE COLUMN NAME
--- 19.	Rename the column class in students to grade with datatype VARCHAR(20).
+
+-- #####      Section 6: ALTER TABLE – CHANGE COLUMN NAME      #####
+-- 19.	Rename the column first_name in employees_details to f_name with datatype VARCHAR(20).
+ALTER TABLE employees_details
+	CHANGE first_name f_name VARCHAR(20);
+DESC employees_details;
+
 -- 20.	Change the column name instructor_name in courses table to teacher_name.
--- 21.	Rename the column hire_date in employees to joining_date.
+ALTER TABLE courses
+	CHANGE instructor_name teacher_name VARCHAR(50);
+DESC courses;
 
--- 🔹 Section 7: TRUNCATE TABLE
--- 22.	Truncate the employees table (remove all data but keep structure).
+-- 21.	Rename the column hire_date in employees_details to joining_date.
+ALTER TABLE employees_details
+	CHANGE hire_date joining_date DATE;
+DESC employees_details;
+
+
+-- #####      Section 7: TRUNCATE TABLE      #####
+-- 22.	Truncate the employees_detals table (remove all data but keep structure).
+				-- Before the remove all the information in the employees_details table we have to all some values in to this table.
+                INSERT INTO employees_details (f_name, last_name, salary, joining_date, email, age)
+				VALUES
+				('Amit', 'Sharma', 55000.75, '2021-03-15', 'amit.sharma@example.com', 28),
+				('Priya', 'Verma', 72000.00, '2020-07-10', 'priya.verma@example.com', 32),
+				('Rahul', 'Mehta', 60000.50, '2022-01-25', 'rahul.mehta@example.com', 26),
+				('Sneha', 'Gupta', 80000.00, '2019-11-05', 'sneha.gupta@example.com', 35),
+				('Vikram', 'Singh', 45000.25, '2023-06-18', 'vikram.singh@example.com', 24);
+                SELECT * FROM employees_details;
+-- now do the  (remove all data but keep structure).
+TRUNCATE TABLE employees_details;
+SELECT * FROM employees_details;
+DESC employees_details;
+
 -- 23.	Truncate the students table.
+			-- same like above query only chage the table name.
+            
+            
+-- #####      Section 8: RENAME TABLE      #####
+-- 24.	Rename the employees_details table to staff.
+RENAME TABLE 
+	employees_details TO staff;
+SHOW TABLES;
 
--- 🔹 Section 8: RENAME TABLE
--- 24.	Rename the employees table to staff.
 -- 25.	Rename the students table to learners.
+			-- same like above query.
