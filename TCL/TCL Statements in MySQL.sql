@@ -213,6 +213,53 @@ SELECT * FROM BANK;
 -- 21.	Insert rows in a transaction with nested savepoints. Release one savepoint and rollback to another.
 -- 22.	Perform an update, set a savepoint, perform a delete, then rollback to the savepoint. Confirm only the delete was undone.
 -- 23.	Perform an update and commit. Then try rollback. Verify that committed changes cannot be undone.
+
 -- 24.	Simulate concurrent transactions: Open two sessions, update the same row in each, and observe the effect of commit/rollback.
+START TRANSACTION;
+-- Session A
+-- Check Amit's balance
+SELECT total_amount FROM BANK WHERE customer_id = 1;
+-- Update balance in Session A
+UPDATE BANK SET total_amount = total_amount - 5000, 
+                last_operation = 'Debit', 
+                last_operation_money = 5000
+WHERE customer_id = 1;
+-- Do NOT commit yet
+
+-- Session B (while Session A is still open)
+START TRANSACTION;
+-- Check Amit's balance
+SELECT total_amount FROM BANK WHERE customer_id = 1;
+-- Update balance in Session B
+UPDATE BANK SET total_amount = total_amount - 3000,
+                last_operation = 'Debit',
+                last_operation_money = 3000
+WHERE customer_id = 1;
+
+-- Session A commits:
+COMMIT;
+-- Session A rollbacks:
+ROLLBACK;
+select * from bank;
+
 -- 25.	Write a transaction that includes INSERT, UPDATE, and DELETE operations. Use savepoints and rollback to undo only specific changes while keeping others.
+START TRANSACTION;
+-- Step 1: Insert a new customer
+INSERT INTO BANK (account_holder_name, bank_branch, account_number, ifsc_code, email, mobile_number, total_amount, last_operation, last_operation_money)
+VALUES ('Ramesh Kumar', 'Jaipur MI Road Branch', 123456789020, 'UBIN0005678', 'ramesh.kumar@example.com', '9393939393', 20000.00, 'Credit', 20000.00);
+SAVEPOINT sp1;
+-- Step 2: Update an existing customer balance
+UPDATE BANK 
+SET total_amount = total_amount + 10000, 
+    last_operation = 'Credit', 
+    last_operation_money = 10000 
+WHERE customer_id = 2;  -- Priya Verma
+SAVEPOINT sp2;
+-- Step 3: Delete a customer
+DELETE FROM BANK WHERE customer_id = 3;  -- Rohit Mehta
+SAVEPOINT sp3;
+-- Rollback only the DELETE (sp3), so Rohit Mehta is restored
+ROLLBACK TO sp2;
+-- Commit the rest (Ramesh’s insert + Priya’s update are kept, delete undone)
+COMMIT;
 
