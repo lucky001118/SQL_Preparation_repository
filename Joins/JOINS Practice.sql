@@ -166,12 +166,92 @@ LEFT JOIN courses c ON c.course_id = e.course_id;
 
 -- RIGHT JOIN
 -- 11.	Show all courses with their enrolled students (include courses even if no students enrolled).
+SELECT c.course_name, s.name
+From  students s 
+RIGHT JOIN enrollments e ON s.student_id = e.student_id
+RIGHT JOIN courses c ON c.course_id = e.course_id;
+
 -- 12.	List all enrollments including course names and student names, ensuring no course is missed.
+DESC enrollments; 
+SELECT * FROM enrollments;
+SELECT e.enrollment_id, s.name, c.course_name, e.grade
+FROM Courses c 
+RIGHT JOIN Enrollments e ON c.course_id = e.course_id
+RIGHT JOIN Students s ON s.student_id = e.student_id;
+
 -- 13.	Display all teachers with assigned courses, including courses without teachers.
+SELECT t.name, c.course_name 
+FROM Teachers t 
+RIGHT JOIN course_teacher ct ON t.teacher_id = ct.teacher_id
+RIGHT JOIN Courses c ON ct.course_id = c.course_id;
 
 -- FULL JOIN (via UNION)
 -- 14.	Display all students and their courses, including students with no courses and courses with no students.
 -- 15.	Show all teachers and courses, even if some teachers don’t teach and some courses don’t have teachers.
+
+-- CROSS JOIN
+-- 16.	Show all possible combinations of students and courses.
+SELECT s.name, c.course_name
+FROM Students s 
+CROSS JOIN Enrollments e
+CROSS JOIN Courses c;
+
+-- 17.	List all possible teacher-course pairs.
+SELECT t.name, c.course_name
+FROM Teachers t 
+CROSS JOIN course_teacher ct
+CROSS JOIN Courses c;
+
+-- 18.	Generate every possible student-teacher combination.
+select s.name, t.name
+FROM Students s 
+CROSS JOIN Teachers t;
+
+-- SELF JOIN
+-- 19.	Find pairs of students with the same age.
+-- 20.	List teachers who teach the same subject.
+-- 21.	Show students who have the same name (duplicate names).
+
+
+-- Advanced JOINs
+-- 22.	Show student names, course names, and teacher names in a single query.
+SELECT s.name , c.course_name, t.name
+FROM Students s 
+INNER JOIN Enrollments e ON s.student_id = e.student_id
+INNER JOIN Courses c ON c.course_id = e.course_id
+INNER JOIN course_teacher ct ON ct.course_id = c.course_id
+INNER JOIN Teachers t ON t.teacher_id = ct.teacher_id
+ORDER BY s.name ASC;
+
+-- 23.	Find students who are enrolled in more than one course.
+select s.name, c.course_name
+FROM students s 
+INNER JOIN Enrollments e ON s.student_id = e.student_id
+INNER JOIN Courses c ON c.course_id = e.course_id
+	WHERE 1 < (select Count(e.course_id) from enrollments group by s.student_id, s.name)
+    Order By s.name ASC;
+-- OR
+SELECT s.student_id, s.name, COUNT(e.course_id) AS total_courses
+FROM students s
+INNER JOIN enrollments e ON s.student_id = e.student_id
+GROUP BY s.student_id, s.name
+HAVING COUNT(e.course_id) > 1;
+
+SELECT * FROM enrollments;
+
+-- 24.	Display courses with more than 2 students enrolled.
+SELECT c.course_id, c.course_name, COUNT(e.student_id) As Total_students
+FROM courses c 
+INNER JOIN enrollments e ON c.course_id = e.course_id
+GROUP BY c.course_id, c.course_name
+HAVING COUNT(e.student_id) > 1;
+
+-- 25.	Show students who are not enrolled in any course.
+-- 26.	Find teachers who are not assigned to any course.
+-- 27.	List students along with the number of courses they are enrolled in.
+-- 28.	Display average grade (consider A=4, B=3, C=2) per course using JOINs.
+-- 29.	Show students enrolled in all courses taught by “Dr. Meena.”
+-- 30.	Find students who are enrolled in both “Database Systems” and “Operating Systems.”
 
 
 
